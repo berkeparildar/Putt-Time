@@ -31,7 +31,7 @@ public class CameraRotate : MonoBehaviour
         if (Input.GetMouseButton(0) && !isOnPlayer)
         {
             orbitalTransposer.m_XAxis.m_InputAxisName = "Mouse X";
-            player.transform.forward = new Vector3(transform.forward.x, 0, transform.forward.z);
+            // player.transform.forward = new Vector3(transform.forward.x, 0, transform.forward.z);
         }
         else
         {

@@ -6,11 +6,15 @@ public class DirectionModifier : MonoBehaviour
     [SerializeField] private GameObject rotatingArm;
     [SerializeField] private GameObject directionObject;
     [SerializeField] private Vector3 currentDirection;
-    [SerializeField] private int rotationMagnitude;
-    [SerializeField] private int rotationSpeed;
+    [SerializeField] private float rotationMagnitude;
+    [SerializeField] private float rotationSpeed;
     [SerializeField] private float currentPower;
     [SerializeField] private PlayerBall playerBall;
-    [SerializeField] private bool rotatingLeft;
+    [SerializeField] private float previousRotationAngle;
+    [SerializeField] private float currentMagnitude;
+    [SerializeField] private float rotationAngle;
+    [SerializeField] private bool rotatingRight;
+    [SerializeField] private Vector3 rotationVector;
 
     private void OnEnable()
     {
@@ -25,16 +29,20 @@ public class DirectionModifier : MonoBehaviour
     private void Update()
     {
         currentPower = playerBall.GetPower(); 
-        MoveDirection();
+        SetValuesAccordingToPower();
+        RotateDirectionIndicator();
     }
 
     private void SetValuesAccordingToPower()
     {
+        rotationMagnitude = currentPower / 5;
     }
 
-    private void MoveDirection()
+    private void RotateDirectionIndicator()
     {
-        float rotationAngle = Mathf.Sin(Time.time * rotationSpeed) * 45f;
-        rotatingArm.transform.localRotation = Quaternion.Euler(0f, rotationAngle, 0);
+        currentMagnitude = Mathf.Lerp(currentMagnitude, rotationMagnitude, 0.1f);
+        float angle = Mathf.Sin(Time.time * rotationSpeed) * currentMagnitude;
+        rotationVector = new Vector3(0, angle, 0);
+        rotatingArm.transform.localRotation = Quaternion.Euler(rotationVector);
     }
 }
