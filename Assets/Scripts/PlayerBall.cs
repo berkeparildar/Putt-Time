@@ -1,21 +1,52 @@
+using Photon.Pun;
 using UnityEngine;
 
 public class PlayerBall : MonoBehaviour
 {
-    [SerializeField] private float power;
-    [SerializeField] private bool isDragging;
-    [SerializeField] private Vector3 startPosition;
-    [SerializeField] private GameObject direction;
-    [SerializeField] private Rigidbody rb;
-    [SerializeField] private DirectionModifier directionModifier;
-    [SerializeField] private float directionDamping = 0.8f;
-    [SerializeField] private Vector3 currentDragDirection;
-    [SerializeField] private Vector2 mousePos;
- 
+    [SerializeField]
+    private float power;
+
+    [SerializeField]
+    private bool isDragging;
+
+    [SerializeField]
+    private Vector3 startPosition;
+
+    [SerializeField]
+    private GameObject direction;
+
+    [SerializeField]
+    private Rigidbody rb;
+
+    [SerializeField]
+    private DirectionModifier directionModifier;
+
+    [SerializeField]
+    private float directionDamping = 0.8f;
+
+    private Vector3 currentDragDirection;
+
+    private Vector3 mousePos;
+
+    [SerializeField]
+    private LayerMask groundLayer;
+
+    private PhotonView _photonView;
+
+    private bool isMoving;
+
+    private void Start()
+    {
+        _photonView = transform.parent.GetComponent<PhotonView>();
+    }
+
     private void Update()
     {
-        GetInput();
-        // StopBall();
+        if (!isMoving)
+        {
+            GetInput();
+        }
+        CheckVelocity();
     }
 
     public float GetPower()
@@ -25,7 +56,7 @@ public class PlayerBall : MonoBehaviour
 
     private void GetInput()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (_photonView.IsMine && Input.GetMouseButtonDown(0))
         {
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out var hit) && hit.transform.CompareTag("Player"))
@@ -33,38 +64,49 @@ public class PlayerBall : MonoBehaviour
                 directionModifier.enabled = true;
                 isDragging = true;
                 startPosition = transform.position;
-                startPosition.y = transform.position.y;
-                Debug.Log(startPosition);
             }
         }
-        if (isDragging && Input.GetMouseButton(0))
+        if (_photonView.IsMine && isDragging && Input.GetMouseButton(0))
         {
-            mousePos = new Vector2(Input.mousePosition.x, Camera.main.pixelHeight - Input.mousePosition.y);
-            var currentPosition = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, Camera.main.nearClipPlane));
-            currentPosition.y = transform.position.y;
-            Debug.Log(currentPosition);
-            var dragDirection = (startPosition - currentPosition).normalized;
-            currentDragDirection = Vector3.Lerp(currentDragDirection, dragDirection, directionDamping * Time.deltaTime);
-            var ballRotation = new Vector3(currentDragDirection.x, 0, currentDragDirection.y);
-            power = Mathf.Clamp(startPosition.y - Input.mousePosition.y, 0, 200);
-            var newRotation = Quaternion.FromToRotation(Vector3.forward, currentDragDirection);
-            transform.localRotation = newRotation; 
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (
+                Physics.Raycast(ray, out var hit, groundLayer) && hit.transform.CompareTag("Ground")
+            )
+            {
+                mousePos = hit.point;
+                mousePos.y = transform.position.y;
+            }
+            var dragDirection = (startPosition - mousePos).normalized;
+            currentDragDirection = Vector3.Lerp(
+                currentDragDirection,
+                dragDirection,
+                2 * Time.deltaTime
+            );
+            var ballRotation = new Vector3(currentDragDirection.x, 0, currentDragDirection.z);
+            power = Mathf.Clamp(Vector3.Distance(startPosition, mousePos), 0, 5);
+            var newRotation = Quaternion.LookRotation(ballRotation, Vector3.up);
+            transform.localRotation = newRotation;
         }
-        if (isDragging && Input.GetMouseButtonUp(0))
+        if (_photonView.IsMine && isDragging && Input.GetMouseButtonUp(0))
         {
             directionModifier.enabled = false;
-            Debug.Log(power / 10);
-            rb.AddForce(direction.transform.forward * (power / 10), ForceMode.Impulse);
+            if (power > 1)
+            {
+                rb.AddForce(direction.transform.forward * (power * 3), ForceMode.Impulse);
+            }
             isDragging = false;
         }
     }
 
-    private void StopBall()
+    private void CheckVelocity()
     {
-        if (rb.velocity.magnitude < 0.5f)
+        if (rb.velocity.magnitude <= 0)
         {
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
+            isMoving = false;
+        }
+        else
+        {
+            isMoving = true;
         }
     }
 }
