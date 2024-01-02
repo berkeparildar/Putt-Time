@@ -11,11 +11,10 @@ public class ConnectToServer : MonoBehaviourPunCallbacks
         PhotonNetwork.ConnectUsingSettings();
     }
 
-    void Update()
-    {
+    void Update(){
         if (_joinedRoom && PhotonNetwork.InRoom)
         {
-            if (PhotonNetwork.CurrentRoom.PlayerCount == 1 && !_hasLoaded)
+            if (PhotonNetwork.CurrentRoom.PlayerCount == 2 && !_hasLoaded)
             {
                 _hasLoaded = true;
                 PhotonNetwork.LoadLevel("Game");

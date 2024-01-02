@@ -3,21 +3,16 @@ using UnityEngine;
 
 public class CameraRotate : MonoBehaviour
 {
-    [SerializeField]
-    private CinemachineVirtualCamera virtualCamera;
+    [SerializeField] private CinemachineVirtualCamera virtualCamera;
+    [SerializeField] private bool isOnPlayer;
+    [SerializeField] private CinemachineOrbitalTransposer orbitalTransposer;
 
-    [SerializeField]
-    private bool isOnPlayer;
-
-    [SerializeField]
-    private CinemachineOrbitalTransposer orbitalTransposer;
-
-    private void Start()
-    {
+    private void Start() 
+    { 
         orbitalTransposer = virtualCamera.GetCinemachineComponent<CinemachineOrbitalTransposer>();
     }
 
-    void Update()
+    private void Update()
     {
         RotateWithInput();
     }

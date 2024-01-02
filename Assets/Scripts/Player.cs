@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using Cinemachine;
 using ExitGames.Client.Photon;
 using Photon.Pun;
@@ -8,17 +8,23 @@ using UnityEngine;
 public class Player : MonoBehaviour, IOnEventCallback
 {
     [SerializeField] private Vector3 spawnPosition;
+    [SerializeField] private PlayerBall playerBall;
+    [SerializeField] private Rigidbody rb;
+    [SerializeField] private MeshRenderer playerRenderer;
+    [SerializeField] private List<Material> playerMaterials;
+    [SerializeField] private PhotonView photonView;
     private CinemachineVirtualCamera _virtualCamera;
-    private PhotonView _photonView;
     private bool _inHole;
+    private int _stroke;
 
     void Start()
     {
-        _photonView = GetComponent<PhotonView>();
+        playerBall = transform.GetChild(0).GetComponent<PlayerBall>();
+        AssignPlayerMaterial();
         SetUpCamera();
     }
 
-     private void OnEnable()
+    private void OnEnable()
     {
         PhotonNetwork.AddCallbackTarget(this);
     }
@@ -28,11 +34,9 @@ public class Player : MonoBehaviour, IOnEventCallback
         PhotonNetwork.RemoveCallbackTarget(this);
     }
 
-    private void Update() { }
-
     private void SetUpCamera()
     {
-        if (_photonView.IsMine)
+        if (photonView.IsMine)
         {
             _virtualCamera = GameObject
                 .Find("VirtualCamera")
@@ -49,16 +53,44 @@ public class Player : MonoBehaviour, IOnEventCallback
             _inHole = true;
             GameManager.RaiseEventToAll(GameManager.GetEventCode(EventCode.INHOLE), null);
         }
+        else if (other.CompareTag("RespawnPlane"))
+        {
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            transform.position = playerBall.GetLastSavedPosition();
+        }
     }
 
     public void OnEvent(EventData photonEvent)
     {
-        if (_photonView.IsMine)
+        if (photonView.IsMine)
         {
             if (photonEvent.Code == GameManager.GetEventCode(EventCode.NEXTHOLE))
             {
-                transform.position = (Vector3)photonEvent.CustomData;
+                var nextHolePosition = (Vector3)photonEvent.CustomData; 
+                transform.position = nextHolePosition;
+                _stroke = 0;
+                playerBall.SetLastSavedPosition(nextHolePosition);
             }
+        }
+    }
+
+    public void IncreaseStroke()
+    {
+        _stroke++;
+    }
+
+    private void AssignPlayerMaterial()
+    {
+        if (photonView.IsMine)
+        {      
+            playerRenderer.material = playerMaterials[playerMaterials.Count - 1];
+            playerMaterials.RemoveAt(playerMaterials.Count - 1);
+        }
+        else
+        {
+            playerRenderer.material = playerMaterials[0];
+            playerMaterials.RemoveAt(0);
         }
     }
 }

@@ -3,11 +3,9 @@ using UnityEngine;
 
 public class SpawnPlayers : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject playerPrefab;
 
-    [SerializeField]
-    private Vector3 spawnPosition;
+    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private Vector3 spawnPosition;
 
     void Start()
     {

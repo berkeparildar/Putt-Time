@@ -7,8 +7,8 @@ using UnityEngine;
 
 public enum EventCode
 {
-    INHOLE = 0,
-    NEXTHOLE = 1
+    INHOLE,
+    NEXTHOLE
 }
 
 public class GameManager : MonoBehaviour, IOnEventCallback
@@ -16,7 +16,9 @@ public class GameManager : MonoBehaviour, IOnEventCallback
     private int _currentHole;
     private const int MaxNumberOfHoles = 6;
     public int playersInHole;
-    private List<GameObject> players;
+    [SerializeField] private List<Vector3> spawnPositions;
+    [SerializeField] private List<int> parList;
+    [SerializeField] private PhotonView playerView;
 
     private void Start()
     {
@@ -72,7 +74,8 @@ public class GameManager : MonoBehaviour, IOnEventCallback
     private IEnumerator GoToNextHoleEvent()
     {
         yield return new WaitForSeconds(3);
-        RaiseEventToAll(GetEventCode(EventCode.NEXTHOLE), new Vector3(0, 0, 0));
+        _currentHole++;
+        RaiseEventToAll(GetEventCode(EventCode.NEXTHOLE), spawnPositions[_currentHole]);
     }
 
     private void CheckIfNextHole()
