@@ -3,15 +3,18 @@ using UnityEngine;
 
 public class ConnectToServer : MonoBehaviourPunCallbacks
 {
+    
     private bool _joinedRoom;
     private bool _hasLoaded;
 
     void Start()
     {
         PhotonNetwork.ConnectUsingSettings();
+                Debug.Log(GameManager.GetEventCode(EventCode.INHOLE));
     }
 
-    void Update(){
+    void Update()
+    {
         if (_joinedRoom && PhotonNetwork.InRoom)
         {
             if (PhotonNetwork.CurrentRoom.PlayerCount == 2 && !_hasLoaded)

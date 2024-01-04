@@ -97,6 +97,7 @@ GameObject:
   - component: {fileID: 240539023757863687}
   - component: {fileID: 8973908865168570760}
   - component: {fileID: 8533548883634714847}
+  - component: {fileID: 24350909862844745}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -191,6 +192,8 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 62c5fdbf8663f4abc99e89aab516ce92, type: 2}
   - {fileID: 2100000, guid: 620df5ca4693f4d7e93a303b83526f17, type: 2}
   photonView: {fileID: 8973908865168570760}
+  score: 0
+  playerName: 
 --- !u!114 &8973908865168570760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -211,6 +214,7 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 8533548883634714847}
+  - {fileID: 24350909862844745}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -228,8 +232,41 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SynchronizeVelocity: 1
   m_SynchronizeAngularVelocity: 0
-  m_TeleportEnabled: 0
+  m_TeleportEnabled: 1
   m_TeleportIfDistanceGreaterThan: 3
+--- !u!114 &24350909862844745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 967411845936477459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8efc6b1d64977384eb3405357896c656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PositionModel:
+    SynchronizeEnabled: 1
+    TeleportEnabled: 1
+    TeleportIfDistanceGreaterThan: 3
+    InterpolateOption: 2
+    InterpolateMoveTowardsSpeed: 1
+    InterpolateLerpSpeed: 1
+    ExtrapolateOption: 0
+    ExtrapolateSpeed: 1
+    ExtrapolateIncludingRoundTripTime: 1
+    ExtrapolateNumberOfStoredPositions: 1
+  m_RotationModel:
+    SynchronizeEnabled: 0
+    InterpolateOption: 1
+    InterpolateRotateTowardsSpeed: 180
+    InterpolateLerpSpeed: 5
+  m_ScaleModel:
+    SynchronizeEnabled: 0
+    InterpolateOption: 0
+    InterpolateMoveTowardsSpeed: 1
+    InterpolateLerpSpeed: 0
 --- !u!1 &1598551460091495920
 GameObject:
   m_ObjectHideFlags: 0
@@ -418,7 +455,6 @@ MonoBehaviour:
   direction: {fileID: 4381805611952703701}
   rb: {fileID: 2455186160336703074}
   directionModifier: {fileID: 135331895981344149}
-  directionDamping: 0.99
   lastSavedPosition: {x: 0, y: 0, z: 0}
   groundLayer:
     serializedVersion: 2

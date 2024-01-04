@@ -2,26 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using ExitGames.Client.Photon;
 using Photon.Pun;
+using Photon.Pun.UtilityScripts;
 using Photon.Realtime;
 using UnityEngine;
 
 public enum EventCode
 {
     INHOLE,
-    NEXTHOLE
+    NEXTHOLE,
+    UPDATESCORE,
+    SETLEVEL
 }
 
 public class GameManager : MonoBehaviour, IOnEventCallback
 {
     private int _currentHole;
+    private LevelInitializer _levelInitializer;
     private const int MaxNumberOfHoles = 6;
     public int playersInHole;
-    [SerializeField] private List<Vector3> spawnPositions;
-    [SerializeField] private List<int> parList;
-    [SerializeField] private PhotonView playerView;
 
     private void Start()
     {
+        _levelInitializer = GetComponent<LevelInitializer>();
         _currentHole = 0;
     }
 
@@ -37,7 +39,7 @@ public class GameManager : MonoBehaviour, IOnEventCallback
 
     public void OnEvent(EventData photonEvent)
     {
-        if (PhotonNetwork.IsMasterClient && photonEvent.Code == 0)
+        if (PhotonNetwork.IsMasterClient && photonEvent.Code == GetEventCode(EventCode.INHOLE))
         {
            playersInHole++;
         }
@@ -59,6 +61,12 @@ public class GameManager : MonoBehaviour, IOnEventCallback
             case EventCode.NEXTHOLE:
                 code = 1;
                 break;
+            case EventCode.UPDATESCORE:
+                code = 2;
+                break;
+            case EventCode.SETLEVEL:
+                code = 3;
+                break;
         }
         return code;
     }
@@ -75,7 +83,7 @@ public class GameManager : MonoBehaviour, IOnEventCallback
     {
         yield return new WaitForSeconds(3);
         _currentHole++;
-        RaiseEventToAll(GetEventCode(EventCode.NEXTHOLE), spawnPositions[_currentHole]);
+        RaiseEventToAll(GetEventCode(EventCode.NEXTHOLE), _levelInitializer.levelHoles[_currentHole].GetSpawnPosition());
     }
 
     private void CheckIfNextHole()
@@ -88,5 +96,12 @@ public class GameManager : MonoBehaviour, IOnEventCallback
                 StartCoroutine(GoToNextHoleEvent());
             }
         }
+    }
+
+    public int CalculateScore(int stroke)
+    {
+        var currentPar = _levelInitializer.levelHoles[_currentHole].GetParCount();
+        var score = stroke - currentPar;
+        return score;
     }
 }

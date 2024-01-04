@@ -1,4 +1,6 @@
+using System;
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 
 public class PlayerBall : MonoBehaviour
@@ -11,9 +13,10 @@ public class PlayerBall : MonoBehaviour
     [SerializeField] private GameObject direction;
     [SerializeField] private Rigidbody rb;
     [SerializeField] private DirectionModifier directionModifier;
-    [SerializeField] private float directionDamping = 0.8f;
     [SerializeField] private Vector3 lastSavedPosition;
     [SerializeField] private LayerMask groundLayer;
+
+    public static Action UpdateStrokeUI;
     private Plane inputPlane;
     private Vector3 currentDragDirection;
     private Vector3 mousePos;
@@ -53,7 +56,6 @@ public class PlayerBall : MonoBehaviour
         }
         if (_photonView.IsMine && isDragging && Input.GetMouseButton(0))
         {
-            // Plane plane = new Plane(Vector3.up, transform.position);
             inputPlane.SetNormalAndPosition(Vector3.up, transform.position);
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (inputPlane.Raycast(ray, out var hit))
@@ -61,13 +63,6 @@ public class PlayerBall : MonoBehaviour
                 mousePos = ray.GetPoint(hit);
                 currentDragDirection = (startPosition - mousePos).normalized;
             }
-            // if (Physics.Raycast(ray, out var hit, groundLayer))
-            // {
-            //     mousePos = hit.point;
-            //     mousePos.y = transform.position.y;
-            // }
-            // var dragDirection = (startPosition - mousePos).normalized;
-            // currentDragDirection = Vector3.Lerp(currentDragDirection, dragDirection, 2 * Time.deltaTime);
             var ballRotation = new Vector3(currentDragDirection.x, 0, currentDragDirection.z);
             power = Mathf.Clamp(Vector3.Distance(startPosition, mousePos), 0, 5);
             var newRotation = Quaternion.LookRotation(ballRotation, Vector3.up);
@@ -81,6 +76,7 @@ public class PlayerBall : MonoBehaviour
             {
                 rb.AddForce(direction.transform.forward * (power * 3), ForceMode.Impulse);
                 player.IncreaseStroke();
+                UpdateStrokeUI?.Invoke();
             }
             isDragging = false;
         }

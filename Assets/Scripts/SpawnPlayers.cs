@@ -10,7 +10,6 @@ public class SpawnPlayers : MonoBehaviour
     void Start()
     {
         Debug.Log("Creating player!!");
-        PhotonNetwork.Instantiate(playerPrefab.name, spawnPosition, Quaternion.identity);
-        Debug.Log(PhotonNetwork.CurrentRoom.PlayerCount);
+        PhotonNetwork.Instantiate(playerPrefab.name, spawnPosition, Quaternion.identity); 
     }
 }
