@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class LevelInitializer : MonoBehaviour
 {
-    public List<Hole> levelHoles;
+    public List<Hole> LevelHoles;
     private void Awake()
     {
         switch (SceneManager.GetActiveScene().name)
@@ -12,7 +12,7 @@ public class LevelInitializer : MonoBehaviour
             case "Game":
             var holeOne = new Hole(new Vector3(0, 13.62f, 0), 3);
             var holeTwo = new Hole(new Vector3(0, 13.62f, 0), 3);
-            levelHoles = new List<Hole>() {holeOne, holeTwo};
+            LevelHoles = new List<Hole>() {holeOne, holeTwo};
             break;
         }
     }

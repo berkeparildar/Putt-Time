@@ -2,22 +2,22 @@ using UnityEngine;
 
 public class Hole
 {
-    private Vector3 spawnPosition;
-    private int par;
+    private readonly Vector3 _spawnPosition;
+    private readonly int _par;
 
     public Hole(Vector3 spawnPos, int par)
     {
-        spawnPosition = spawnPos;
-        this.par = par;
+        _spawnPosition = spawnPos;
+        _par = par;
     }
 
     public Vector3 GetSpawnPosition()
     {
-        return spawnPosition;
+        return _spawnPosition;
     }
 
     public int GetParCount()
     {
-        return par;
+        return _par;
     }
 }

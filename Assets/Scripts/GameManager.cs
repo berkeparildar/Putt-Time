@@ -1,8 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
 using ExitGames.Client.Photon;
 using Photon.Pun;
-using Photon.Pun.UtilityScripts;
 using Photon.Realtime;
 using UnityEngine;
 
@@ -41,7 +39,7 @@ public class GameManager : MonoBehaviour, IOnEventCallback
     {
         if (PhotonNetwork.IsMasterClient && photonEvent.Code == GetEventCode(EventCode.INHOLE))
         {
-           playersInHole++;
+            playersInHole++;
         }
     }
 
@@ -50,10 +48,10 @@ public class GameManager : MonoBehaviour, IOnEventCallback
         CheckIfNextHole();
     }
 
-    public static byte GetEventCode(EventCode eventcode)
+    public static byte GetEventCode(EventCode eventCode)
     {
         byte code = 0;
-        switch (eventcode)
+        switch (eventCode)
         {
             case EventCode.INHOLE:
                 code = 0;
@@ -68,22 +66,23 @@ public class GameManager : MonoBehaviour, IOnEventCallback
                 code = 3;
                 break;
         }
+
         return code;
     }
 
     public static void RaiseEventToAll(byte code, object data)
     {
-        Debug.Log("Sending event");
-        var eventOpitons = RaiseEventOptions.Default;
-        eventOpitons.Receivers = ReceiverGroup.All;
-        PhotonNetwork.RaiseEvent(code, data, eventOpitons, SendOptions.SendReliable);
+        var eventOptions = RaiseEventOptions.Default;
+        eventOptions.Receivers = ReceiverGroup.All;
+        PhotonNetwork.RaiseEvent(code, data, eventOptions, SendOptions.SendReliable);
     }
 
     private IEnumerator GoToNextHoleEvent()
     {
         yield return new WaitForSeconds(3);
         _currentHole++;
-        RaiseEventToAll(GetEventCode(EventCode.NEXTHOLE), _levelInitializer.levelHoles[_currentHole].GetSpawnPosition());
+        RaiseEventToAll(GetEventCode(EventCode.NEXTHOLE),
+            _levelInitializer.LevelHoles[_currentHole].GetSpawnPosition());
     }
 
     private void CheckIfNextHole()
@@ -100,7 +99,7 @@ public class GameManager : MonoBehaviour, IOnEventCallback
 
     public int CalculateScore(int stroke)
     {
-        var currentPar = _levelInitializer.levelHoles[_currentHole].GetParCount();
+        var currentPar = _levelInitializer.LevelHoles[_currentHole].GetParCount();
         var score = stroke - currentPar;
         return score;
     }

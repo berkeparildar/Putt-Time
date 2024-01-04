@@ -1,7 +1,0 @@
-root=true
-
-[*.cs]
-dotnet_diagnostic.IDE0008.severity = none
-dotnet_diagnostic.IDE0055.severity = none
-dotnet_diagnostic.IDE0058.severity = none
-dotnet_diagnostic.IDE0040.severity = none

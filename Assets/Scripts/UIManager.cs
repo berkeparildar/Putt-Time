@@ -17,8 +17,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private List<TextMeshProUGUI> playerNames;
     [SerializeField] private List<TextMeshProUGUI> playerScores;
     [SerializeField] private List<TextMeshProUGUI> playerHoles;
-
-
+    
     private int _stroke;
     private int _par;
     private int _hole;
@@ -41,11 +40,11 @@ public class UIManager : MonoBehaviour
         PlayerBall.UpdateStrokeUI -= IncreaseStroke;
     }
 
-    void Start()
+    private void Start()
     {
         _stroke = 0;
         _hole = 1;
-        _par = GetComponent<LevelInitializer>().levelHoles[_hole - 1].GetParCount();
+        _par = GetComponent<LevelInitializer>().LevelHoles[_hole - 1].GetParCount();
         UpdateUI();
     }
 
@@ -76,7 +75,7 @@ public class UIManager : MonoBehaviour
     {
         _stroke = 0;
         _hole++;
-        _par = GetComponent<LevelInitializer>().levelHoles[_hole - 1].GetParCount();
+        _par = GetComponent<LevelInitializer>().LevelHoles[_hole - 1].GetParCount();
         UpdateUI();
     }
 
