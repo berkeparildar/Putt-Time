@@ -9,8 +9,10 @@ public class ConnectToServer : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        PhotonNetwork.ConnectUsingSettings();
-                Debug.Log(GameManager.GetEventCode(EventCode.INHOLE));
+        if (!PhotonNetwork.IsConnected)
+        {
+            PhotonNetwork.ConnectUsingSettings();
+        }
     }
 
     void Update()

@@ -15,16 +15,18 @@ public class Player : MonoBehaviour, IOnEventCallback
     [SerializeField] private MeshRenderer playerRenderer;
     [SerializeField] private List<Material> playerMaterials;
     [SerializeField] private PhotonView photonView;
+    [SerializeField] private float jumpStrength;
 
     private CinemachineVirtualCamera _virtualCamera;
     private GameManager _gameManager;
 
     public static Action<Player> PlayerJoined;
     public static Action MovedToNextHole;
-    public static Action ScoreUpdated;
+    public static Action<string, Color> OnColorSet;
 
-    private bool _inHole;
-    private int _stroke;
+    [SerializeField] private bool inHole;
+    [SerializeField] private int stroke;
+    public Color color;
     public int score;
     public string playerName;
 
@@ -32,7 +34,6 @@ public class Player : MonoBehaviour, IOnEventCallback
     {
         playerBall = transform.GetChild(0).GetComponent<PlayerBall>();
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        AssignPlayerMaterial();
         SetUpCamera();
         if (photonView.IsMine)
         {
@@ -71,16 +72,24 @@ public class Player : MonoBehaviour, IOnEventCallback
     {
         if (photonView.IsMine)
         {
-            if (other.CompareTag("Hole") && !_inHole)
+            if (other.CompareTag("Hole") && !inHole)
             {
-                _inHole = true;
-                GameManager.RaiseEventToAll(GameManager.GetEventCode(EventCode.INHOLE), null);
+                inHole = true;
+                score += _gameManager.CalculateScore(stroke);
+                var scoreData = new object[] { PhotonNetwork.LocalPlayer.UserId, score };
+                GameManager.RaiseEventToAll(GameManager.GetEventCode(EventCode.INHOLE), scoreData);
             }
             else if (other.CompareTag("RespawnPlane"))
             {
                 rb.velocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
                 transform.position = playerBall.GetLastSavedPosition();
+            }
+            else if (other.CompareTag("Jumper"))
+            {
+                Debug.Log("JUMPING");
+                other.transform.parent.GetComponent<Animator>().SetTrigger("Jump");
+                rb.AddForce(Vector3.up * jumpStrength, ForceMode.Impulse);
             }
         }
     }
@@ -91,27 +100,35 @@ public class Player : MonoBehaviour, IOnEventCallback
         {
             if (photonEvent.Code == GameManager.GetEventCode(EventCode.NEXTHOLE))
             {
-                score += _gameManager.CalculateScore(_stroke);
-                var scoreData = new object[] { photonView.ViewID, score };
-                GameManager.RaiseEventToAll(GameManager.GetEventCode(EventCode.UPDATESCORE), scoreData);
                 var nextHolePosition = (Vector3)photonEvent.CustomData;
                 ResetPlayerVelocity();
                 transform.position = nextHolePosition;
-                _stroke = 0;
+                stroke = 0;
                 playerBall.SetLastSavedPosition(nextHolePosition);
                 MovedToNextHole?.Invoke();
-                ScoreUpdated?.Invoke();
+                inHole = false;
+            }
+            else if (photonEvent.Code == GameManager.GetEventCode(EventCode.SETMATERIAL))
+            {
+                var data = (Dictionary<string, int>)photonEvent.CustomData;
+                var colorIndex = data[PhotonNetwork.LocalPlayer.UserId];
+                playerRenderer.material = playerMaterials[colorIndex];
+                color = playerMaterials[colorIndex].color;
+                OnColorSet?.Invoke(PhotonNetwork.LocalPlayer.UserId, color);
+                playerRenderer.material.renderQueue = 2500;
+                transform.localScale = new Vector3(1.05f, 1.05f, 1.05f);
             }
         }
-        if (!photonView.IsMine && photonEvent.Code == GameManager.GetEventCode(EventCode.UPDATESCORE))
+        else
         {
-            var data = (object[])photonEvent.CustomData;
-            var viewId = (int)data[0];
-            if (viewId == photonView.ViewID)
+            if (photonEvent.Code == GameManager.GetEventCode(EventCode.SETMATERIAL))
             {
-                score += (int)data[1];
+                var data = (Dictionary<string, int>)photonEvent.CustomData;
+                var colorIndex = data[photonView.Owner.UserId];
+                color = playerMaterials[colorIndex].color;
+                playerRenderer.material = playerMaterials[colorIndex];
+                OnColorSet?.Invoke(photonView.Owner.UserId, color);
             }
-            ScoreUpdated?.Invoke();
         }
     }
 
@@ -123,22 +140,6 @@ public class Player : MonoBehaviour, IOnEventCallback
 
     public void IncreaseStroke()
     {
-        _stroke++;
-    }
-
-    private void AssignPlayerMaterial()
-    {
-        if (photonView.IsMine)
-        {
-            playerRenderer.material = playerMaterials[playerMaterials.Count - 1];
-            playerRenderer.material.renderQueue = 2500;
-            playerMaterials.RemoveAt(playerMaterials.Count - 1);
-            transform.localScale = new Vector3(0.51f, 0.51f, 0.51f);
-        }
-        else
-        {
-            playerRenderer.material = playerMaterials[0];
-            playerMaterials.RemoveAt(0);
-        }
+        stroke++;
     }
 }

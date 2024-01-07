@@ -59,6 +59,14 @@ public class DirectionModifier : MonoBehaviour
         }
     }
 
+    public void DisableAll()
+    {
+        for (int i = 1; i <= directionArrows.Length; i++)
+        {
+            directionArrows[i - 1].SetActive(false);
+        }
+    }
+
     private void RotateDirectionIndicator()
     {
         currentMagnitude = Mathf.Lerp(currentMagnitude, rotationMagnitude, 0.1f);

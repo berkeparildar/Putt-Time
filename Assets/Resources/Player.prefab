@@ -115,7 +115,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 13.79, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 380368131588585944}
@@ -166,9 +166,9 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &240539023757863687
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186,12 +186,16 @@ MonoBehaviour:
   rb: {fileID: 2455186160336703074}
   playerRenderer: {fileID: 6294414783844129391}
   playerMaterials:
+  - {fileID: 2100000, guid: 620df5ca4693f4d7e93a303b83526f17, type: 2}
   - {fileID: 2100000, guid: ee9ce4feeb07240388cb9f24681d0915, type: 2}
-  - {fileID: 2100000, guid: 6f85793fcae614a6db310adebd7f78ba, type: 2}
   - {fileID: 2100000, guid: 55660135dcb704a459bec01161f29fa4, type: 2}
   - {fileID: 2100000, guid: 62c5fdbf8663f4abc99e89aab516ce92, type: 2}
-  - {fileID: 2100000, guid: 620df5ca4693f4d7e93a303b83526f17, type: 2}
+  - {fileID: 2100000, guid: 6f85793fcae614a6db310adebd7f78ba, type: 2}
   photonView: {fileID: 8973908865168570760}
+  jumpStrength: 30
+  inHole: 0
+  stroke: 0
+  color: {r: 0, g: 0, b: 0, a: 0}
   score: 0
   playerName: 
 --- !u!114 &8973908865168570760
@@ -456,9 +460,10 @@ MonoBehaviour:
   rb: {fileID: 2455186160336703074}
   directionModifier: {fileID: 135331895981344149}
   lastSavedPosition: {x: 0, y: 0, z: 0}
-  groundLayer:
+  playerLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 8
+  isMoving: 0
 --- !u!114 &135331895981344149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -472,16 +477,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotatingArm: {fileID: 4381805611952703701}
-  directionObject: {fileID: 0}
-  currentDirection: {x: 0, y: 0, z: 0}
   rotationMagnitude: 45
   rotationSpeed: 5
   currentPower: 0
   playerBall: {fileID: 5201870630134808254}
-  previousRotationAngle: 0
   currentMagnitude: 0
-  rotationAngle: 5
-  rotatingRight: 0
   rotationVector: {x: 0, y: 0, z: 0}
   directionArrows: []
 --- !u!1 &4381805611952703701

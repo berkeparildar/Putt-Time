@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class Menu : MonoBehaviourPunCallbacks, IOnEventCallback
 {
     private const string Characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    private readonly string[] _levelNames = new string[] { "Game" };
+    private readonly string[] _levelNames = new string[] { "Game", "Jumpington" };
     private const int RoomNameLength = 5;
     [SerializeField] private TMP_InputField roomNameField;
     [SerializeField] private TMP_InputField playerNameField;
@@ -33,7 +33,10 @@ public class Menu : MonoBehaviourPunCallbacks, IOnEventCallback
 
     void Start()
     {
-        PhotonNetwork.ConnectUsingSettings();
+        if (!PhotonNetwork.IsConnected)
+        {
+            PhotonNetwork.ConnectUsingSettings();
+        }
         playerNameField.onEndEdit.AddListener(SetPlayerName);
         roomNameField.onEndEdit.AddListener(SetRoomName);
     }
@@ -104,6 +107,7 @@ public class Menu : MonoBehaviourPunCallbacks, IOnEventCallback
         var generatedRoomName = GenerateRoomName();
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = 4;
+        roomOptions.PublishUserId = true;
         PhotonNetwork.CreateRoom(generatedRoomName, roomOptions);
         selectedLevelName = SetLevel();
         roomNameText.text = "Room ID: " + generatedRoomName;
@@ -173,7 +177,8 @@ public class Menu : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public string SetLevel()
     {
-        string levelName = _levelNames[Random.Range(0, _levelNames.Length)];
+        // string levelName = _levelNames[Random.Range(0, _levelNames.Length)];
+        var levelName = "Jumpington";
         return levelName;
     }
 
