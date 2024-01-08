@@ -34,6 +34,7 @@ public class Player : MonoBehaviour, IOnEventCallback
 
     void Start()
     {
+        Debug.Log(PhotonNetwork.LocalPlayer.NickName);
         playerBall = transform.GetChild(0).GetComponent<PlayerBall>();
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         SetUpCamera();
@@ -79,7 +80,7 @@ public class Player : MonoBehaviour, IOnEventCallback
                 audioSource.PlayOneShot(audioClip);
                 inHole = true;
                 score += _gameManager.CalculateScore(stroke);
-                var scoreData = new object[] { PhotonNetwork.LocalPlayer.UserId, score };
+                var scoreData = new object[] { PhotonNetwork.LocalPlayer.NickName, score };
                 GameManager.RaiseEventToAll(GameManager.GetEventCode(EventCode.INHOLE), scoreData);
             }
             else if (other.CompareTag("RespawnPlane"))
@@ -114,10 +115,10 @@ public class Player : MonoBehaviour, IOnEventCallback
             else if (photonEvent.Code == GameManager.GetEventCode(EventCode.SETMATERIAL))
             {
                 var data = (Dictionary<string, int>)photonEvent.CustomData;
-                var colorIndex = data[PhotonNetwork.LocalPlayer.UserId];
+                var colorIndex = data[PhotonNetwork.LocalPlayer.NickName];
                 playerRenderer.material = playerMaterials[colorIndex];
                 color = playerMaterials[colorIndex].color;
-                OnColorSet?.Invoke(PhotonNetwork.LocalPlayer.UserId, color);
+                OnColorSet?.Invoke(PhotonNetwork.LocalPlayer.NickName, color);
                 playerRenderer.material.renderQueue = 2500;
                 transform.localScale = new Vector3(1.05f, 1.05f, 1.05f);
             }
@@ -126,11 +127,12 @@ public class Player : MonoBehaviour, IOnEventCallback
         {
             if (photonEvent.Code == GameManager.GetEventCode(EventCode.SETMATERIAL))
             {
+                Debug.Log(photonView.Owner.NickName);
                 var data = (Dictionary<string, int>)photonEvent.CustomData;
-                var colorIndex = data[photonView.Owner.UserId];
+                var colorIndex = data[photonView.Owner.NickName];
                 color = playerMaterials[colorIndex].color;
                 playerRenderer.material = playerMaterials[colorIndex];
-                OnColorSet?.Invoke(photonView.Owner.UserId, color);
+                OnColorSet?.Invoke(photonView.Owner.NickName, color);
             }
         }
     }

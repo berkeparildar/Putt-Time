@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,13 +14,30 @@ public class SpawnPlayers : MonoBehaviour
     [SerializeField] private GameObject spinnerTriangle;
     [SerializeField] private GameObject spinnerX;
 
-    void Start()
+    void Awake()
     {
         PhotonNetwork.Instantiate(playerPrefab.name, spawnPosition, Quaternion.identity);
         if (PhotonNetwork.IsMasterClient)
         {
             SpawnObjects();
-        }   
+        }  
+         
+    }
+    private void AssignPlayerMaterials()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            Dictionary<string, int> colorDictionary = new Dictionary<string, int>();
+            int index = 0;
+            foreach (var player in PhotonNetwork.CurrentRoom.Players)
+            {
+                Debug.Log("Added to dict" + player.Value.NickName);
+                colorDictionary.Add(player.Value.NickName, index);
+                index++;
+            }
+            var data = colorDictionary;
+            GameManager.RaiseEventToAll(GameManager.GetEventCode(EventCode.SETMATERIAL), data);
+        }
     }
 
     private void SpawnObjects()

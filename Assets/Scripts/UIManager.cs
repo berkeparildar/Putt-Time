@@ -79,6 +79,24 @@ public class UIManager : MonoBehaviour, IOnEventCallback
         if (_numberOfPlayers == PhotonNetwork.CurrentRoom.PlayerCount)
         {
             InitializeCard();
+            AssignPlayerMaterials();
+        }
+    }
+
+     private void AssignPlayerMaterials()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            Dictionary<string, int> colorDictionary = new Dictionary<string, int>();
+            int index = 0;
+            foreach (var player in PhotonNetwork.CurrentRoom.Players)
+            {
+                Debug.Log("Added to dict" + player.Value.NickName);
+                colorDictionary.Add(player.Value.NickName, index);
+                index++;
+            }
+            var data = colorDictionary;
+            GameManager.RaiseEventToAll(GameManager.GetEventCode(EventCode.SETMATERIAL), data);
         }
     }
 
@@ -155,7 +173,7 @@ public class UIManager : MonoBehaviour, IOnEventCallback
     {
         for (int i = 0; i < players.Count; i++)
         {
-            if (players[i].GetComponent<PhotonView>().Owner.UserId == id)
+            if (players[i].GetComponent<PhotonView>().Owner.NickName == id)
             {
                 playerColors[i].color = color;
             }
@@ -169,7 +187,7 @@ public class UIManager : MonoBehaviour, IOnEventCallback
             var scoreData = (Dictionary<string, int>)photonEvent.CustomData;
             foreach (var player in players)
             {
-                player.score = scoreData[player.GetComponent<PhotonView>().Owner.UserId];
+                player.score = scoreData[player.GetComponent<PhotonView>().Owner.NickName];
             }
             SortPlayers();
             UpdateCard();
@@ -179,7 +197,7 @@ public class UIManager : MonoBehaviour, IOnEventCallback
             var scoreData = (Dictionary<string, int>)photonEvent.CustomData;
             foreach (var player in players)
             {
-                player.score = scoreData[player.GetComponent<PhotonView>().Owner.UserId];
+                player.score = scoreData[player.GetComponent<PhotonView>().Owner.NickName];
             }
             SortPlayers();
             UpdateCard();

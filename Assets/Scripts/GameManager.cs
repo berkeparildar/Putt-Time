@@ -27,7 +27,6 @@ public class GameManager : MonoBehaviour, IOnEventCallback
     {
         _levelInitializer = GetComponent<LevelInitializer>();
         currentHole = 0;
-        AssignPlayerMaterials();
         scoreDictionary = new Dictionary<string, int>();
         InitializeScoreDictionary();
     }
@@ -48,8 +47,8 @@ public class GameManager : MonoBehaviour, IOnEventCallback
         {
             playersInHole++;
             var data = (object[])photonEvent.CustomData;
-            var userId = (string)data[0];
-            scoreDictionary[userId] = (int)data[1];
+            var nickName = (string)data[0];
+            scoreDictionary[nickName] = (int)data[1];
             if (playersInHole == PhotonNetwork.CurrentRoom.PlayerCount)
             {
                 playersInHole = 0;
@@ -64,7 +63,7 @@ public class GameManager : MonoBehaviour, IOnEventCallback
         {
             foreach (var player in PhotonNetwork.CurrentRoom.Players)
             {
-                scoreDictionary.Add(player.Value.UserId, 0);
+                scoreDictionary.Add(player.Value.NickName, 0);
             }
         }
     }
@@ -131,19 +130,5 @@ currentHole].GetParCount();
         return score;
     }
 
-    private void AssignPlayerMaterials()
-    {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            Dictionary<string, int> colorDictionary = new Dictionary<string, int>();
-            int index = 0;
-            foreach (var player in PhotonNetwork.CurrentRoom.Players)
-            {
-                colorDictionary.Add(player.Value.UserId, index);
-                index++;
-            }
-            var data = colorDictionary;
-            RaiseEventToAll(GetEventCode(EventCode.SETMATERIAL), data);
-        }
-    }
+    
 }
