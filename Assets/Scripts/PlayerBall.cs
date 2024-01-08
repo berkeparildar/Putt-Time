@@ -51,10 +51,8 @@ public class PlayerBall : MonoBehaviour
             float maxRaycastDistance = 100f;
             if (Physics.Raycast(ray, out var hit, maxRaycastDistance, playerLayer) && hit.transform.CompareTag("Player"))
             {
-                Debug.Log(hit.transform.gameObject.name);
                 if (hit.transform.GetComponent<PhotonView>().IsMine)
                 {
-                    Debug.Log("Young fly ");
                     directionModifier.enabled = true;
                     isDragging = true;
                     startPosition = transform.position;
@@ -83,7 +81,7 @@ public class PlayerBall : MonoBehaviour
             directionModifier.enabled = false;
             if (power > 1)
             {
-                rb.AddForce(direction.transform.forward * (power * 10), ForceMode.Impulse);
+                rb.AddForce(direction.transform.forward * (power * 9), ForceMode.Impulse);
                 player.IncreaseStroke();
                 UpdateStrokeUI?.Invoke();
             }

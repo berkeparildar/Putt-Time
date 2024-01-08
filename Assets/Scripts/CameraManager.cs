@@ -1,7 +1,7 @@
 using Cinemachine;
 using UnityEngine;
 
-public class CameraRotate : MonoBehaviour
+public class CameraManager : MonoBehaviour
 {
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
     [SerializeField] private bool isOnPlayer;
@@ -68,7 +68,9 @@ public class CameraRotate : MonoBehaviour
         else
         {
             orbitalTransposer.m_XAxis.m_InputAxisName = null;
+            orbitalTransposer.m_XAxis.m_InputAxisValue = 0;
         }
+
         if (isOnPlayer && Input.GetMouseButtonUp(0))
         {
             isOnPlayer = false;

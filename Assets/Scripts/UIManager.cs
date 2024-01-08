@@ -27,7 +27,6 @@ public class UIManager : MonoBehaviour, IOnEventCallback
     private int _par;
     private int _hole;
     private int _numberOfPlayers;
-    private int _updatedScores;
 
     [SerializeField] private Sprite upArrow;
     [SerializeField] private Sprite downArrow;
@@ -192,7 +191,8 @@ public class UIManager : MonoBehaviour, IOnEventCallback
 
     public void PlayAgainButton()
     {
-        PhotonNetwork.LoadLevel("Game");
+        var levelNames = new string[] {"Classicton", "Spinnington", "Jumpington"};
+        PhotonNetwork.LoadLevel(levelNames[Random.Range(0, levelNames.Length)]);
     }
 
     public void GoToMenuButton()

@@ -16,6 +16,8 @@ public class Player : MonoBehaviour, IOnEventCallback
     [SerializeField] private List<Material> playerMaterials;
     [SerializeField] private PhotonView photonView;
     [SerializeField] private float jumpStrength;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip audioClip;
 
     private CinemachineVirtualCamera _virtualCamera;
     private GameManager _gameManager;
@@ -74,6 +76,7 @@ public class Player : MonoBehaviour, IOnEventCallback
         {
             if (other.CompareTag("Hole") && !inHole)
             {
+                audioSource.PlayOneShot(audioClip);
                 inHole = true;
                 score += _gameManager.CalculateScore(stroke);
                 var scoreData = new object[] { PhotonNetwork.LocalPlayer.UserId, score };
@@ -87,7 +90,7 @@ public class Player : MonoBehaviour, IOnEventCallback
             }
             else if (other.CompareTag("Jumper"))
             {
-                Debug.Log("JUMPING");
+                audioSource.PlayOneShot(audioClip);
                 other.transform.parent.GetComponent<Animator>().SetTrigger("Jump");
                 rb.AddForce(Vector3.up * jumpStrength, ForceMode.Impulse);
             }
@@ -140,6 +143,7 @@ public class Player : MonoBehaviour, IOnEventCallback
 
     public void IncreaseStroke()
     {
+        audioSource.PlayOneShot(audioClip);
         stroke++;
     }
 }

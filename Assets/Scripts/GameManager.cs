@@ -108,8 +108,7 @@ public class GameManager : MonoBehaviour, IOnEventCallback
     {
         yield return new WaitForSeconds(3);
         currentHole++;
-        if (
-currentHole == NumberOfHoles)
+        if (currentHole == NumberOfHoles)
         {
             if (PhotonNetwork.IsMasterClient)
             {
@@ -120,8 +119,7 @@ currentHole == NumberOfHoles)
         {
             RaiseEventToAll(GetEventCode(EventCode.UPDATESCORE), scoreDictionary);
             RaiseEventToAll(GetEventCode(EventCode.NEXTHOLE),
-            _levelInitializer.LevelHoles[
-    currentHole].GetSpawnPosition());
+            _levelInitializer.LevelHoles[currentHole].GetSpawnPosition());
         }
     }
 

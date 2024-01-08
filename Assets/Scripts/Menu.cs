@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class Menu : MonoBehaviourPunCallbacks, IOnEventCallback
 {
     private const string Characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    private readonly string[] _levelNames = new string[] { "Game", "Jumpington" };
+    private readonly string[] _levelNames = new string[] { "Classicton", "Jumpington", "Spinnington" };
     private const int RoomNameLength = 5;
     [SerializeField] private TMP_InputField roomNameField;
     [SerializeField] private TMP_InputField playerNameField;
@@ -21,6 +21,7 @@ public class Menu : MonoBehaviourPunCallbacks, IOnEventCallback
     [SerializeField] private List<TextMeshProUGUI> playerNamesList;
     [SerializeField] private Button startButton;
     [SerializeField] private Animator canvasAnimator;
+    [SerializeField] private AudioSource audioSource;
     private static readonly int GoToNameEntry = Animator.StringToHash("GoToNameEntry");
     private static readonly int GoToRoomButtons = Animator.StringToHash("GoToRoomButtons");
     private static readonly int NameToStart = Animator.StringToHash("NameToStart");
@@ -43,9 +44,11 @@ public class Menu : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void PlayButton()
     {
+        audioSource.Play();
         if (playerName.Length >= 2)
         {
             canvasAnimator.SetTrigger(GoToRoomButtons);
+            audioSource.Play();
         }
         else
         {
@@ -92,6 +95,7 @@ public class Menu : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void QuitApp()
     {
+        audioSource.Play();
         PhotonNetwork.LeaveLobby();
         PhotonNetwork.Disconnect();
         Application.Quit();
@@ -99,11 +103,13 @@ public class Menu : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void StartGame()
     {
+        audioSource.Play();
         GameManager.RaiseEventToAll(GameManager.GetEventCode(EventCode.SETLEVEL), selectedLevelName);
     }
 
     public void CreateRoom()
     {
+        audioSource.Play();
         var generatedRoomName = GenerateRoomName();
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = 4;
@@ -116,12 +122,12 @@ public class Menu : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void GoToRoomName()
     {
+        audioSource.Play();
         canvasAnimator.SetTrigger(JoinRoom1);
     }
 
     public override void OnConnectedToMaster()
     {
-        Debug.Log("Connected to server.");
         PhotonNetwork.JoinLobby();
     }
 
@@ -150,35 +156,39 @@ public class Menu : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void NameEntryBack()
     {
+        audioSource.Play();
         canvasAnimator.SetTrigger(NameToStart);
     }
 
     public void RoomButtonsBack()
     {
+        audioSource.Play();
         canvasAnimator.SetTrigger(RoomToStart);
     }
 
     public void RoomNameBack()
     {
+        audioSource.Play();
         canvasAnimator.SetTrigger(JoinToRoom);
     }
 
     public void FinalBack()
     {
+        audioSource.Play();
         PhotonNetwork.LeaveRoom();
         canvasAnimator.SetTrigger(FinalToRoom);
     }
 
     public void SubmitPlayerName()
     {
+        audioSource.Play();
         PhotonNetwork.NickName = playerName;
         canvasAnimator.SetTrigger(GoToRoomButtons);
     }
 
     public string SetLevel()
     {
-        // string levelName = _levelNames[Random.Range(0, _levelNames.Length)];
-        var levelName = "Jumpington";
+        string levelName = _levelNames[Random.Range(0, _levelNames.Length)];
         return levelName;
     }
 

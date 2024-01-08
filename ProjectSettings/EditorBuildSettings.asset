@@ -9,9 +9,12 @@ EditorBuildSettings:
     path: Assets/Scenes/Menu.unity
     guid: 89dae6bdb119f485d84bbca6d0cbc04d
   - enabled: 1
-    path: Assets/Scenes/Classic.unity
+    path: Assets/Scenes/Classicton.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
     path: Assets/Scenes/Jumpington.unity
     guid: 0f01cea29b9e92c469cd1955cb7a393a
+  - enabled: 1
+    path: Assets/Scenes/Spinnington.unity
+    guid: 6370477e89058604ebec58ebf985ec89
   m_configObjects: {}
