@@ -189,7 +189,7 @@ public class Menu : MonoBehaviourPunCallbacks, IOnEventCallback
     public string SetLevel()
     {
         string levelName = _levelNames[Random.Range(0, _levelNames.Length)];
-        return levelName;
+        return "Classicton";
     }
 
     public void OnEvent(EventData photonEvent)
