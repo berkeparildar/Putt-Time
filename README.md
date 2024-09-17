@@ -1,4 +1,4 @@
-[![Badge 1](media/pf.png)](https://berkeparildar.github.io/)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+[![Badge 1](media/pf.png)](https://berkeparildar.github.io/Games/)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 [![Badge 2](media/ty.png)](https://youtu.be/SRp2cSUUpRo)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 # Putt Time
